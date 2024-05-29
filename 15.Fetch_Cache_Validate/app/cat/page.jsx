@@ -1,5 +1,9 @@
 async function getData() {
-  const res = await fetch("https://api.thecatapi.com/v1/images/search");
+  const res = await fetch("https://api.thecatapi.com/v1/images/search", {
+    next: {
+      tags: ["cats"],
+    },
+  });
   if (!res.ok) {
     throw new Error("failed to fetch data");
   }
