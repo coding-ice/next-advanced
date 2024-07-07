@@ -1,4 +1,5 @@
 // App -> Page
+
 // generateStaticParams -> getStaticPaths
 export function generateStaticParams() {
   return [{ id: "1", id: "2" }];
