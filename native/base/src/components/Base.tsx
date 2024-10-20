@@ -1,0 +1,14 @@
+import React, { memo } from 'react';
+import { createStyles } from 'antd-style';
+
+const useStyles = createStyles(({ css }) => ({
+  wrapper: css``,
+}));
+
+const Base = memo(() => {
+  const { styles } = useStyles();
+
+  return <div className={styles.wrapper}>Title</div>;
+});
+
+export default Base;
