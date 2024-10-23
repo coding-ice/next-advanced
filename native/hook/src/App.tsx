@@ -1,10 +1,11 @@
+import Hover from './components/Hover';
 import { Global } from './config/theme';
 
 function App() {
   return (
     <>
       <Global />
-      <div>App</div>
+      <Hover />
     </>
   );
 }
