@@ -44,6 +44,7 @@ function App() {
     const rect = boxEl.current?.getBoundingClientRect();
     console.log(rect);
     console.log('offsetY', e.pageY - rect!.top - scrollY);
+    console.log('native', e.nativeEvent.offsetY);
   };
 
   return (
