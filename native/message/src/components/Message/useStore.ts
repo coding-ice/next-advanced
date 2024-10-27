@@ -12,18 +12,95 @@ const initialState = {
   bottom: [],
 };
 
-function useStore(defaultPosition: Position) {
+let count = 0;
+
+function getId(messageProps: MessageProps) {
+  if (messageProps.id) {
+    return messageProps.id;
+  }
+  return ++count;
+}
+
+function getMessagePostion(preState: MessageList, id: number) {
+  for (const [position, messages] of Object.entries(preState)) {
+    if (messages.find(message => message.id === id)) {
+      return position as Position;
+    }
+  }
+}
+
+function findMessageIndex(preState: MessageList, id: number) {
+  const position = getMessagePostion(preState, id);
+
+  let index = -1;
+  if (position) {
+    index = preState[position].findIndex(message => message.id === id);
+  }
+
+  return {
+    position,
+    index,
+  };
+}
+
+function useStore(defaultPosition: Position = 'top') {
   const [messageList, setMessageList] = useState<MessageList>({ ...initialState });
 
   return {
     messageList,
-    add: (messageProps: MessageProps) => {},
+    add: (messageProps: MessageProps) => {
+      const id = getId(messageProps);
+      setMessageList(preState => {
+        if (messageProps.id && getMessagePostion(preState, id)) {
+          return preState;
+        }
 
-    update: (id: number, messageProps: MessageProps) => {},
+        const position = messageProps.position || defaultPosition;
+        const isTop = position === 'top';
+        const messages = isTop
+          ? [{ ...messageProps, id }, ...preState[position]]
+          : [...preState[position], { ...messageProps, id }];
 
-    remove: (id: number) => {},
+        return {
+          ...preState,
+          [position]: messages,
+        };
+      });
 
-    clearAll: () => {},
+      return id;
+    },
+
+    update: (id: number, messageProps: MessageProps) => {
+      if (!id && id !== 0) return;
+      setMessageList(preState => {
+        const nextState = { ...preState };
+        const { position, index } = findMessageIndex(nextState, id);
+
+        if (position && index !== -1) {
+          nextState[position][index] = { ...nextState[position][index], ...messageProps };
+        }
+
+        return nextState;
+      });
+    },
+
+    remove: (id: number) => {
+      setMessageList(prevState => {
+        const { position, index } = findMessageIndex(prevState, id);
+        if (!position) {
+          return prevState;
+        }
+
+        return {
+          ...prevState,
+          [position]: prevState[position].filter(val => val.id !== index),
+        };
+      });
+    },
+
+    clearAll: () => {
+      setMessageList({ ...initialState });
+    },
   };
 }
 

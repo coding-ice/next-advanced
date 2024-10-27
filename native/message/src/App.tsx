@@ -1,11 +1,11 @@
-import Message from './components/Message';
+import MessageProvider from './components/Message';
 import { Global } from './config/theme';
 
 function App() {
   return (
     <>
       <Global />
-      <Message />
+      <MessageProvider />
     </>
   );
 }
