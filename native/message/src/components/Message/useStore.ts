@@ -86,14 +86,14 @@ function useStore(defaultPosition: Position = 'top') {
 
     remove: (id: number) => {
       setMessageList(prevState => {
-        const { position, index } = findMessageIndex(prevState, id);
+        const { position } = findMessageIndex(prevState, id);
         if (!position) {
           return prevState;
         }
 
         return {
           ...prevState,
-          [position]: prevState[position].filter(val => val.id !== index),
+          [position]: prevState[position].filter(message => message.id !== id),
         };
       });
     },

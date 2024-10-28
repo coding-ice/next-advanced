@@ -1,9 +1,10 @@
-import React, { ReactNode, useEffect, useMemo } from 'react';
+import React, { forwardRef, PropsWithChildren, ReactNode, useEffect, useImperativeHandle, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { createStyles } from 'antd-style';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 import useStore from './useStore';
+import useTimer from './useTimer';
 
 export type Position = 'top' | 'bottom';
 
@@ -23,7 +24,7 @@ const useStyles = createStyles(({ css }) => ({
     left: 50%;
     transform: translateX(-50%);
     pointer-events: none;
-    .message {
+    .message-item {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -31,7 +32,7 @@ const useStyles = createStyles(({ css }) => ({
       height: 40px;
       border: 1px solid #000;
       margin-bottom: 10px;
-      transition: all 1s ease;
+      transition: all 0.5s ease;
       pointer-events: all;
 
       &-enter {
@@ -53,20 +54,37 @@ const useStyles = createStyles(({ css }) => ({
   `,
 }));
 
-// 整体的默认设置
-const MessageProvider: React.FC<{}> = props => {
+interface IMessageItemProps extends MessageProps {
+  remove: (id: number) => void;
+}
+
+const MessageItem = ({
+  className,
+  id,
+  duration,
+  remove,
+  children,
+  ...rest
+}: PropsWithChildren<Omit<IMessageItemProps, 'content'>>) => {
+  const { onMouseEnter, onMouseLeave } = useTimer(id!, remove, duration);
+
+  return (
+    <span className={`message-item ${className}`} {...rest} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+      {children}
+    </span>
+  );
+};
+
+export interface MessageRef {
+  add: (messageProps: MessageProps) => number;
+  update: (id: number, messageProps: MessageProps) => void;
+  remove: (id: number) => void;
+  clearAll: () => void;
+}
+
+const MessageProvider = forwardRef<MessageRef, {}>((props, ref) => {
   const { styles } = useStyles();
   const { messageList, add, update, remove, clearAll } = useStore('top');
-
-  useEffect(() => {
-    let timer = setInterval(() => {
-      add({ content: Math.random().toString().slice(2, 8) });
-    }, 1000);
-
-    return () => {
-      clearInterval(timer);
-    };
-  }, []);
 
   const el = useMemo(() => {
     const divEl = document.createElement('div');
@@ -75,17 +93,28 @@ const MessageProvider: React.FC<{}> = props => {
     return divEl;
   }, []);
 
+  if ('current' in ref!) {
+    ref.current = {
+      add,
+      update,
+      remove,
+      clearAll,
+    };
+  }
+
   const wrapper = (
     <TransitionGroup className={styles.wrapper}>
-      {messageList.top.map(message => (
-        <CSSTransition key={message.id} timeout={1000} classNames="message">
-          <span className="message"> {message.content}</span>
+      {messageList.top.map(({ position, content, ...rest }) => (
+        <CSSTransition key={rest.id} timeout={1000} classNames="message-item">
+          <MessageItem {...rest} remove={remove}>
+            {content}
+          </MessageItem>
         </CSSTransition>
       ))}
     </TransitionGroup>
   );
 
   return createPortal(wrapper, el);
-};
+});
 
 export default MessageProvider;
