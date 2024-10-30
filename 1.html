@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        height: 1500px;
+      }
+      .box {
+        /* position: relative; */
+        margin-top: 1000px;
+        width: 200px;
+        height: 200px;
+        background: pink;
+        overflow: auto;
+      }
+      h3 {
+        line-height: 40px;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box"></div>
+    <script>
+      const box = document.querySelector(".box");
+      box.scrollIntoView({
+        block: "center",
+        inline: "center",
+        behavior: "smooth",
+      });
+    </script>
+  </body>
+</html>
