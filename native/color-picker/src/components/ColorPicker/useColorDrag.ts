@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Color } from 'antd/es/color-picker';
 
 import { TransformOffset } from './Transform';
 
@@ -8,13 +9,15 @@ type EventHandle = (event: EventType) => void;
 
 interface ColorDragProps {
   offset?: TransformOffset;
+  color?: Color;
   containerRef: React.RefObject<HTMLDivElement>;
   targetRef: React.RefObject<HTMLDivElement>;
   direction?: 'x' | 'y';
   onDragChange?: (offset: TransformOffset) => void;
+  calculate?: () => TransformOffset;
 }
 
-function useColorDrag({ offset, containerRef, targetRef, direction, onDragChange }: ColorDragProps) {
+function useColorDrag({ offset, color, containerRef, targetRef, direction, onDragChange, calculate }: ColorDragProps) {
   const [offsetValue, setOffsetValue] = useState(offset || { x: 0, y: 0 });
 
   const dragRef = useRef({
@@ -26,6 +29,15 @@ function useColorDrag({ offset, containerRef, targetRef, direction, onDragChange
     document.removeEventListener('mousemove', onDragMove);
     document.removeEventListener('mouseup', onDragStop);
   }, []);
+
+  useEffect(() => {
+    if (dragRef.current.flag === false) {
+      const calcOffset = calculate?.();
+      if (calcOffset) {
+        setOffsetValue(calcOffset);
+      }
+    }
+  }, [color]);
 
   const updateOffset = (e: EventType) => {
     const scrollXOffset = document.documentElement.scrollLeft || document.body.scrollLeft;

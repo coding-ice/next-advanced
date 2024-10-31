@@ -61,10 +61,15 @@ const ColorPickerPanel = ({ className, style, value, onChange }: ColorPickerPane
     return new Color(value);
   });
 
+  const onPaletteChange = (color: Color) => {
+    setColorValue(color);
+    onChange?.(color);
+  };
+
   return (
     <div className={cx(styles.wrapper, 'color-picker', className)} style={style}>
       <div className="color-picker-panel">
-        <Palette color={colorValue} />
+        <Palette color={colorValue} onChange={onPaletteChange} />
       </div>
     </div>
   );

@@ -5,8 +5,9 @@ import { Color } from './color';
 import Handler from './Handler';
 import Transform from './Transform';
 import useColorDrag from './useColorDrag';
+import { calcColor, calcOffset } from './utils';
 
-const Palette = ({ color }: { color: Color }) => {
+const Palette = ({ color, onChange }: { color: Color; onChange: (color: Color) => void }) => {
   const transformRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -14,7 +15,11 @@ const Palette = ({ color }: { color: Color }) => {
     containerRef,
     targetRef: transformRef,
     onDragChange(offset) {
-      // console.log(offset);
+      const newColor = calcColor({ offset, containerRef, targetRef: transformRef, color });
+      onChange(newColor);
+    },
+    calculate() {
+      return calcOffset({ color, containerRef, targetRef: transformRef });
     },
   });
 
