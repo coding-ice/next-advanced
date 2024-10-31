@@ -10,7 +10,7 @@
       }
       .box {
         /* position: relative; */
-        margin-top: 1000px;
+        /* margin-top: 1000px; */
         width: 200px;
         height: 200px;
         background: pink;
@@ -26,11 +26,18 @@
     <div class="box"></div>
     <script>
       const box = document.querySelector(".box");
-      box.scrollIntoView({
-        block: "center",
-        inline: "center",
-        behavior: "smooth",
+      box.addEventListener("mousedown", (e) => {
+        console.log(e);
       });
+
+      // box.addEventListener("mousemove", (e) => {
+      //   console.log(e);
+      // });
+      // box.scrollIntoView({
+      //   block: "center",
+      //   inline: "center",
+      //   behavior: "smooth",
+      // });
     </script>
   </body>
 </html>

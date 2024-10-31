@@ -84,6 +84,85 @@ importers:
         specifier: ^2.0.1
         version: 2.0.1(vite@5.4.9(@types/node@20.16.14))
 
+  native/color-picker:
+    dependencies:
+      '@ctrl/tinycolor':
+        specifier: ^4.1.0
+        version: 4.1.0
+      antd:
+        specifier: ^5.21.3
+        version: 5.21.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      antd-style:
+        specifier: ^3.7.0
+        version: 3.7.1(@types/react@18.3.11)(antd@5.21.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react:
+        specifier: ^18.3.1
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.3.1
+        version: 18.3.1(react@18.3.1)
+      reset.css:
+        specifier: ^2.0.2
+        version: 2.0.2
+    devDependencies:
+      '@esbuild-plugins/node-globals-polyfill':
+        specifier: ^0.2.3
+        version: 0.2.3(esbuild@0.21.5)
+      '@ianvs/prettier-plugin-sort-imports':
+        specifier: ^4.3.1
+        version: 4.3.1(prettier@3.3.3)
+      '@rollup/plugin-replace':
+        specifier: ^5.0.7
+        version: 5.0.7(rollup@4.24.0)
+      '@types/node':
+        specifier: ^20.16.11
+        version: 20.16.14
+      '@types/react':
+        specifier: ^18.3.11
+        version: 18.3.11
+      '@types/react-dom':
+        specifier: ^18.3.0
+        version: 18.3.1
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^7.18.0
+        version: 7.18.0(@typescript-eslint/parser@7.18.0(eslint@9.13.0)(typescript@5.6.3))(eslint@9.13.0)(typescript@5.6.3)
+      '@typescript-eslint/parser':
+        specifier: ^7.18.0
+        version: 7.18.0(eslint@9.13.0)(typescript@5.6.3)
+      '@vitejs/plugin-react':
+        specifier: ^4.3.2
+        version: 4.3.3(vite@5.4.9(@types/node@20.16.14))
+      eslint:
+        specifier: ^9.12.0
+        version: 9.13.0
+      eslint-plugin-react-hooks:
+        specifier: ^4.6.2
+        version: 4.6.2(eslint@9.13.0)
+      eslint-plugin-react-refresh:
+        specifier: ^0.4.12
+        version: 0.4.13(eslint@9.13.0)
+      husky:
+        specifier: ^9.1.6
+        version: 9.1.6
+      lint-staged:
+        specifier: ^15.2.10
+        version: 15.2.10
+      prettier:
+        specifier: ^3.3.3
+        version: 3.3.3
+      rollup-plugin-polyfill-node:
+        specifier: ^0.13.0
+        version: 0.13.0(rollup@4.24.0)
+      typescript:
+        specifier: ^5.6.3
+        version: 5.6.3
+      vite:
+        specifier: ^5.4.8
+        version: 5.4.9(@types/node@20.16.14)
+      vite-plugin-svg-icons:
+        specifier: ^2.0.1
+        version: 2.0.1(vite@5.4.9(@types/node@20.16.14))
+
   native/hook:
     dependencies:
       antd:
@@ -455,6 +534,10 @@ packages:
   '@ctrl/tinycolor@3.6.1':
     resolution: {integrity: sha512-SITSV6aIXsuVNV3f3O0f2n/cgyEDWoSqtZMYiAmcsYHydcKrOz3gUxB/iXd/Qf08+IZX4KpgNbvUdMBmWz+kcA==}
     engines: {node: '>=10'}
+
+  '@ctrl/tinycolor@4.1.0':
+    resolution: {integrity: sha512-WyOx8cJQ+FQus4Mm4uPIZA64gbk3Wxh0so5Lcii0aJifqwoVOlfFtorjLE0Hen4OYyHZMXDWqMmaQemBhgxFRQ==}
+    engines: {node: '>=14'}
 
   '@emotion/babel-plugin@11.12.0':
     resolution: {integrity: sha512-y2WQb+oP8Jqvvclh8Q55gLUyb7UFvgv7eJfsj7td5TToBrIUtPay2kMrZi4xjq9qw2vD0ZR5fSho0yqoFgX7Rw==}
@@ -3220,6 +3303,8 @@ snapshots:
       '@babel/helper-validator-identifier': 7.25.9
 
   '@ctrl/tinycolor@3.6.1': {}
+
+  '@ctrl/tinycolor@4.1.0': {}
 
   '@emotion/babel-plugin@11.12.0':
     dependencies:

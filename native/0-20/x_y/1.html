@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -22,12 +22,19 @@
   <body>
     <div class="box"></div>
     <script>
-      const boxEl = document.querySelector(".box");
-      boxEl.addEventListener("click", (e) => {
-        console.log(e.pageY);
-        console.log(e.clientY);
-        console.log(e.offsetY); // offsetY 在 react 中 如何获取？
-        console.log(e.screenY);
+      const boxEl = document.querySelector('.box');
+      // boxEl.addEventListener('click', e => {
+      //   console.log(e.pageY);
+      //   // console.log(e.clientY);
+      //   // console.log(e.offsetY); // offsetY 在 react 中 如何获取？
+      //   // console.log(e.screenY);
+      // });
+
+      boxEl.addEventListener('mousedown', e => {
+        // console.log(e);
+        document.addEventListener('mousemove', e => {
+          console.log(e);
+        });
       });
     </script>
   </body>

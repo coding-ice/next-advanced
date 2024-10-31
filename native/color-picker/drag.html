@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <style>
+      .box {
+        position: relative;
+        width: 300px;
+        height: 150px;
+        border: 1px solid black;
+        .drag {
+          position: absolute;
+          left: 0;
+          top: 0;
+          cursor: pointer;
+          width: 30px;
+          height: 30px;
+          border: 1px solid black;
+          border-radius: 50%;
+          background: pink;
+        }
+      }
+    </style>
+    <div style="display: flex; justify-content: center; align-items: center; width: 100vw; height: 100vh">
+      <div class="box">
+        <div class="drag"></div>
+      </div>
+    </div>
+    <script>
+      const boxEl = document.querySelector('.box');
+      const dragEl = document.querySelector('.drag');
+
+      function dragStart(e) {
+        const { width, height, x: rectX, y: rectY } = boxEl.getBoundingClientRect();
+        const dragElRect = dragEl.getBoundingClientRect();
+
+        let x = e.clientX - rectX - dragElRect.width / 2;
+        let y = e.clientY - rectY - dragElRect.height / 2;
+
+        if (e.clientX - rectX < 0) {
+          x = 0;
+        }
+
+        if (e.clientX - rectX > width) {
+          x = width - dragElRect.width;
+        }
+
+        if (e.clientY - rectY < 0) {
+          y = 0;
+        }
+
+        if (e.clientY - rectY > height) {
+          y = height - dragElRect.height;
+        }
+
+        dragEl.style.left = `${x}px`;
+        dragEl.style.top = `${y}px`;
+      }
+
+      boxEl.addEventListener('mousedown', () => {
+        document.addEventListener('mousemove', dragStart);
+      });
+
+      document.addEventListener('mouseup', () => {
+        document.removeEventListener('mousemove', dragStart);
+      });
+    </script>
+  </body>
+</html>
