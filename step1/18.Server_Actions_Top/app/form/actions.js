@@ -11,7 +11,7 @@ export async function findTodos() {
 export async function createTodo(formData) {
   const todo = formData.get("todo");
   data.push(todo);
-  revalidatePath("/form");
+  revalidatePath("/form"); // 重新验证之后，数据自动更新 （这里非常好）
 
   return data;
 }
