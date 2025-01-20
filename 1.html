@@ -5,39 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <style>
-      body {
-        height: 1500px;
+      * {
+        margin: 0;
+        padding: 0;
       }
       .box {
-        /* position: relative; */
-        /* margin-top: 1000px; */
-        width: 200px;
-        height: 200px;
-        background: pink;
-        overflow: auto;
-      }
-      h3 {
-        line-height: 40px;
-        margin: 0;
+        width: 1200px;
+        height: 500px;
+        background: #7f7f7f;
+        border-width: 10px 30px 40px 50px;
+        border-color: pink;
+        border-style: solid;
       }
     </style>
   </head>
   <body>
     <div class="box"></div>
-    <script>
-      const box = document.querySelector(".box");
-      box.addEventListener("mousedown", (e) => {
-        console.log(e);
-      });
-
-      // box.addEventListener("mousemove", (e) => {
-      //   console.log(e);
-      // });
-      // box.scrollIntoView({
-      //   block: "center",
-      //   inline: "center",
-      //   behavior: "smooth",
-      // });
-    </script>
   </body>
 </html>
