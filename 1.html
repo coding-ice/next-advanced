@@ -13,6 +13,7 @@
         width: 1200px;
         height: 500px;
         background: #7f7f7f;
+        padding: 10px;
         border-width: 10px 30px 40px 50px;
         border-color: pink;
         border-style: solid;
@@ -21,5 +22,9 @@
   </head>
   <body>
     <div class="box"></div>
+    <script>
+      const box = document.querySelector(".box");
+      console.log(box.getBoundingClientRect()); // width + pad + border
+    </script>
   </body>
 </html>

@@ -7,6 +7,11 @@ const theme: ThemeConfig = {
 };
 
 const Global = createGlobalStyle`
+* {
+  margin: 0;
+  padding: 0;
+}
+
 html {
   box-sizing: border-box;
 }
