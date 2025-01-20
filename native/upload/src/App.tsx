@@ -1,52 +1,30 @@
-import { useState } from 'react';
-import { Button, Flex, Popover } from 'antd';
+import React from 'react';
+import { UploadOutlined } from '@ant-design/icons';
+import type { UploadProps } from 'antd';
+import { Button, message, Upload } from 'antd';
 
-import OnBoarding from './components';
-import Mask from './components/OnBoarding/Mask';
-import { Global } from './config/theme';
+const props: UploadProps = {
+  name: 'file',
+  action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
+  headers: {
+    authorization: 'authorization-text',
+  },
+  onChange(info) {
+    if (info.file.status !== 'uploading') {
+      console.log(info.file, info.fileList);
+    }
+    if (info.file.status === 'done') {
+      message.success(`${info.file.name} file uploaded successfully`);
+    } else if (info.file.status === 'error') {
+      message.error(`${info.file.name} file upload failed.`);
+    }
+  },
+};
 
-function App() {
-  const [count, setCount] = useState(0);
-
-  return (
-    <>
-      <Global />
-
-      {/* <Mask
-        ele={document.querySelector('#box')!}
-        renderMaskContent={wrapper => (
-          <Popover
-            content={
-              <div className="step">
-                <button>下一步</button>
-              </div>
-            }
-          >
-            {wrapper}
-          </Popover>
-        )}
-      /> */}
-
-      <OnBoarding
-        steps={[
-          {
-            selector: () => document.querySelector('.btn1')!,
-            renderContent: curStep => <div>hi 我是第一步</div>,
-          },
-          {
-            selector: () => document.querySelector('.btn2')!,
-            renderContent: curStep => <div>第二步</div>,
-          },
-        ]}
-      />
-      <Flex justify="center" align="center" style={{ marginTop: 100 }}>
-        <Button.Group>
-          <Button className="btn1">step 1</Button>
-          <Button className="btn2">step 2</Button>
-        </Button.Group>
-      </Flex>
-    </>
-  );
-}
+const App: React.FC = () => (
+  <Upload {...props}>
+    <Button icon={<UploadOutlined />}>Click to Upload</Button>
+  </Upload>
+);
 
 export default App;
