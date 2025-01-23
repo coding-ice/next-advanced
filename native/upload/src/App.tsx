@@ -3,6 +3,8 @@ import { UploadOutlined } from '@ant-design/icons';
 import type { UploadProps } from 'antd';
 import { Button, message, Upload } from 'antd';
 
+import Todos from './components/Todos';
+
 const props: UploadProps = {
   name: 'file',
   action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
@@ -22,9 +24,12 @@ const props: UploadProps = {
 };
 
 const App: React.FC = () => (
-  <Upload {...props}>
-    <Button icon={<UploadOutlined />}>Click to Upload</Button>
-  </Upload>
+  <>
+    {/* <Upload {...props}>
+      <Button icon={<UploadOutlined />}>Click to Upload</Button>
+    </Upload> */}
+    <Todos />
+  </>
 );
 
 export default App;
