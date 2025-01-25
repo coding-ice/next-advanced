@@ -1,5 +1,5 @@
 import React, { FC, PropsWithChildren, ReactNode, useContext } from 'react';
-import { useLocation, useOutlet } from 'react-router-dom';
+import { matchPath, useLocation, useOutlet } from 'react-router-dom';
 
 interface KeepAliveLayoutProps extends PropsWithChildren {
   keepPaths: Array<string | RegExp>;
@@ -41,7 +41,7 @@ export const useKeepAliveOutlet = () => {
     <>
       {Object.entries(keepElements!).map(([path, ele]) => {
         return (
-          <div className="keep-alive-element" key={path} hidden={pathname !== path}>
+          <div className="keep-alive-element" key={path} hidden={!matchPath(path, pathname)}>
             {ele}
           </div>
         );
