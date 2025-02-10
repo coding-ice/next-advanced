@@ -1,3 +1,6 @@
+import { XStream } from '@ant-design/x';
+import axios from 'axios';
+
 import { useA } from './hooks';
 import useAAndB from './hooks/useAAndB';
 import useCounter from './useCounter';
@@ -47,10 +50,31 @@ const B = () => {
 };
 
 function App() {
+  const handleRequest = async () => {
+    const res = await axios.post(
+      'https://c2a.puppy9.com/api/message',
+      {
+        message_id: '6dfb2ae1-f996-415d-925c-df5924acde92',
+        history: [],
+        user_address: null,
+      },
+      {
+        responseType: 'stream',
+      },
+    );
+
+    // for await (const chunk of XStream({
+    //   readableStream: res.data,
+    // })) {
+    //   console.log(chunk);
+    // }
+  };
+
   return (
     <div>
       <A />
       <B />
+      <button onClick={handleRequest}>+1</button>
     </div>
   );
 }
