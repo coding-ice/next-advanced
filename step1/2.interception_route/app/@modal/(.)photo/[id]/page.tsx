@@ -7,9 +7,12 @@ const PhotoModal = async ({ params }) => {
   return (
     <div
       style={{
+        display: "flex",
+        justifyContent: "center",
         position: "fixed",
         bottom: 0,
         background: "pink",
+        width: "100%",
       }}
     >
       <img width={400} src={photo.src} />
