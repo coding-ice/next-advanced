@@ -1,12 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-interface IParams {
-  params: {
-    id: string;
-  };
-}
-
-export async function GET(request: NextRequest, { params }: IParams) {
+export async function GET(request: NextRequest, { params }) {
   const { id } = await params;
   const dataField = request.nextUrl.searchParams.get("dataField");
 
