@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: NextRequest, { params }) {
-  const { id } = await params;
+export async function GET(
+  request: NextRequest,
+  ctx: RouteContext<"/api/posts/[id]">
+) {
+  const { id } = await ctx.params;
   const dataField = request.nextUrl.searchParams.get("dataField");
 
   const data = await (
