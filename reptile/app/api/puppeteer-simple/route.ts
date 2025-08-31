@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import puppeteer from "puppeteer";
+import * as XLSX from "xlsx";
 
 const PREFIX = "/t/vehicles/toyota";
 const BASE_URL = `https://spareto.com`;
@@ -10,7 +11,7 @@ interface ModelItem {
   yearRange: string;
   data: {
     body: string;
-    carCode: string;
+    model: string;
     produced: string;
     kw: string;
     hp: string;
@@ -73,6 +74,7 @@ async function GET(request: Request) {
       );
 
       return Array.from(h3Elements).map((h3) => {
+        // oe numbers or cross reference numbers
         const key = h3.textContent.replace(/\s+/g, "");
 
         const item = {
@@ -104,7 +106,7 @@ async function GET(request: Request) {
       });
     });
 
-    // [{brand: 'TOYOTA', count: 11, models: [{ model: 'corolla', yearRange: '2020 - 2025', data: [{"body": "", carCode: '	COROLLA (_E9_) 1.8 D (CE90_)', produced: '2020-11 - 2025-03', kw: 49, hp: 67, ccm: 1839 }] }]}]
+    // [{brand: 'TOYOTA', count: 11, models: [{ model: 'corolla', yearRange: '2020 - 2025', data: [{"body": "", model: '	COROLLA (_E9_) 1.8 D (CE90_)', produced: '2020-11 - 2025-03', kw: 49, hp: 67, ccm: 1839 }] }]}]
     const fitVehicles = await page.evaluate(() => {
       // -> id: nav-vehicles -> data-controller="collapse"
       const collapseEls = document
@@ -138,7 +140,7 @@ async function GET(request: Request) {
           ).map((tr) => {
             return {
               body: tr.children[0].textContent.trim(),
-              carCode: tr.children[1].textContent.trim(),
+              model: tr.children[1].textContent.trim(),
               produced: tr.children[2].textContent.trim(),
               kw: tr.children[3].textContent,
               hp: tr.children[4].textContent,
@@ -161,11 +163,34 @@ async function GET(request: Request) {
     });
   }
 
+  // 处理数据，确保所有字段都有值
+  const processedData = data.map((item) => ({
+    页面地址: item.detailUrl || "",
+    标题: item.title || "",
+    OENumbers: JSON.stringify(item.ref_nums[0]?.brands),
+    CrossReferenceNumbers: JSON.stringify(item.ref_nums[1]?.brands),
+    FitVehicles: JSON.stringify(item.fit_vehicles),
+  }));
+
+  // 创建工作表
+  const ws = XLSX.utils.json_to_sheet(processedData, {
+    header: ["页面地址", "标题", "OENumbers", "CrossReferenceNumbers"],
+  });
+
+  // 创建工作簿
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "汽车配件数据");
+
+  const buffer = XLSX.write(wb, { type: "buffer", bookType: "xlsx" });
+
   await browser.close();
 
-  return NextResponse.json({
-    success: true,
-    data,
+  return new Response(buffer, {
+    headers: {
+      "Content-Type":
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "Content-Disposition": 'attachment; filename="data.xlsx"',
+    },
   });
 }
 
