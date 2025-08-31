@@ -6,6 +6,8 @@ const PREFIX = "/t/vehicles/toyota";
 const BASE_URL = `https://spareto.com`;
 const TOYOTA_URL = `${BASE_URL}${PREFIX}`;
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 interface ModelItem {
   modelName: string;
   yearRange: string;
@@ -25,173 +27,187 @@ interface BrandItem {
   models: ModelItem[];
 }
 
+export const maxDuration = 720;
+
 async function GET(request: Request) {
-  // Launch the browser and open a new blank page
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-  const data = [];
+  try {
+    // Launch the browser and open a new blank page
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    page.setDefaultNavigationTimeout(1000 * 60 * 24);
 
-  // Navigate the page to a URL
-  await page.goto(TOYOTA_URL);
+    const data = [];
 
-  // Set screen size
-  await page.setViewport({ width: 1080, height: 1024 });
+    // Navigate the page to a URL
+    await page.goto(TOYOTA_URL);
 
-  // const contents = await page.evaluate(() => {
-  //   return Array.from(
-  //     document.querySelectorAll("#car_types_filter tbody tr td:nth-child(2) a")
-  //   ).map((el) => el.getAttribute("href"));
-  // });
+    // Set screen size
+    await page.setViewport({ width: 1080, height: 1024 });
 
-  const modalCotent =
-    "/t/vehicles/toyota/toyot-corolla-liftback-e9-1-dot-8-d-ce90-1";
+    const contents = await page.evaluate(() => {
+      return Array.from(
+        document.querySelectorAll(
+          "#car_types_filter tbody tr td:nth-child(2) a"
+        )
+      ).map((el) => el.getAttribute("href"));
+    });
 
-  const modalId = modalCotent.replace(PREFIX, "");
-  const categoryUrl = `${TOYOTA_URL}${modalId}/wheel-drive/joint-set`;
-  await page.goto(categoryUrl);
+    for (let content of contents.slice(0, 200)) {
+      const modalId = content.replace(PREFIX, "");
+      const categoryUrl = `${TOYOTA_URL}${modalId}/wheel-drive/joint-set`;
+      await page.goto(categoryUrl);
 
-  const hrefs = await page.evaluate(() =>
-    Array.from(
-      document.querySelectorAll(
-        ".products-list .card-col:nth-child(-n + 3) .card-product-image a"
-      )
-    ).map((el) => el.getAttribute("href"))
-  );
+      console.log(categoryUrl, "categoryUrl");
 
-  for (let href of hrefs) {
-    // detail page
-    const detailUrl = `${BASE_URL}${href}`;
-    await page.goto(detailUrl);
-    const title = await page.waitForSelector("#content h1");
-    // 标题
-    const titText = (await title.evaluate((el) => el.textContent))
-      ?.replace(/\s+/g, "")
-      .trim();
-
-    const refNums = await page.evaluate(() => {
-      const h3Elements = document.querySelectorAll(
-        "#nav-oe .container-fluid h3"
+      const hrefs = await page.evaluate(() =>
+        Array.from(
+          document.querySelectorAll(
+            ".products-list .card-col:nth-child(-n + 3) .card-product-image a"
+          )
+        ).map((el) => el.getAttribute("href"))
       );
 
-      return Array.from(h3Elements).map((h3) => {
-        // oe numbers or cross reference numbers
-        const key = h3.textContent.replace(/\s+/g, "");
+      for (let href of hrefs) {
+        // detail page
+        const detailUrl = `${BASE_URL}${href}`;
+        await page.goto(detailUrl);
+        const title = await page.waitForSelector("#content h1");
+        // 标题
+        const titText = (await title.evaluate((el) => el.textContent))
+          ?.replace(/\s+/g, "")
+          .trim();
 
-        const item = {
-          key,
-          brands: [],
-        };
+        const refNums = await page.evaluate(() => {
+          const h3Elements = document.querySelectorAll(
+            "#nav-oe .container-fluid h3"
+          );
 
-        // 获取 h3 后面的所有元素，直到遇到下一个 h3
-        let nextEl = h3.nextElementSibling;
-        while (nextEl && nextEl.tagName !== "H3") {
-          const brand = nextEl
-            .querySelector(".col-md-2.col-4.ps-4")
-            ?.textContent?.trim();
-          const dataElements = nextEl.querySelectorAll(".me-3");
+          return Array.from(h3Elements).map((h3) => {
+            // oe numbers or cross reference numbers
+            const key = h3.textContent.replace(/\s+/g, "");
 
-          if (brand) {
-            item.brands.push({
-              brand,
-              data: Array.from(dataElements)
-                .map((el) => el.textContent?.trim())
-                .filter(Boolean),
-            });
-          }
-
-          nextEl = nextEl.nextElementSibling;
-        }
-
-        return item;
-      });
-    });
-
-    // [{brand: 'TOYOTA', count: 11, models: [{ model: 'corolla', yearRange: '2020 - 2025', data: [{"body": "", model: '	COROLLA (_E9_) 1.8 D (CE90_)', produced: '2020-11 - 2025-03', kw: 49, hp: 67, ccm: 1839 }] }]}]
-    const fitVehicles = await page.evaluate(() => {
-      // -> id: nav-vehicles -> data-controller="collapse"
-      const collapseEls = document
-        .querySelector("#nav-vehicles")
-        .querySelectorAll('div[data-controller="collapse"]');
-
-      return Array.from(collapseEls).map((collapseEl) => {
-        const brandItem: Partial<BrandItem> = {};
-
-        const firstMenuEl = collapseEl.querySelector(
-          'div[data-action="click->collapse#toggleChild"]'
-        );
-
-        brandItem.brand = firstMenuEl.children[0].textContent.trim();
-        brandItem.count = firstMenuEl.children[1].textContent.match(/\d+/)[0];
-
-        const secondMenuEls = collapseEl.querySelectorAll(
-          'div[data-action="click->collapse#toggleChildSibling"]'
-        );
-
-        brandItem.models = Array.from(secondMenuEls).map((secondMenuEl) => {
-          // @ts-ignore
-          const modelItem: ModelItem = {};
-
-          modelItem.modelName = secondMenuEl.children[0].textContent;
-          modelItem.yearRange = secondMenuEl.children[1].textContent;
-          modelItem.data = Array.from(
-            secondMenuEl.nextElementSibling.querySelectorAll(
-              "tr:not(:first-child)"
-            )
-          ).map((tr) => {
-            return {
-              body: tr.children[0].textContent.trim(),
-              model: tr.children[1].textContent.trim(),
-              produced: tr.children[2].textContent.trim(),
-              kw: tr.children[3].textContent,
-              hp: tr.children[4].textContent,
-              ccm: tr.children[5].textContent,
+            const item = {
+              key,
+              brands: [],
             };
-          });
 
-          return modelItem;
+            // 获取 h3 后面的所有元素，直到遇到下一个 h3
+            let nextEl = h3.nextElementSibling;
+            while (nextEl && nextEl.tagName !== "H3") {
+              const brand = nextEl
+                .querySelector(".col-md-2.col-4.ps-4")
+                ?.textContent?.trim();
+              const dataElements = nextEl.querySelectorAll(".me-3");
+
+              if (brand) {
+                item.brands.push({
+                  brand,
+                  data: Array.from(dataElements)
+                    .map((el) => el.textContent?.trim())
+                    .filter(Boolean),
+                });
+              }
+
+              nextEl = nextEl.nextElementSibling;
+            }
+
+            return item;
+          });
         });
 
-        return brandItem;
-      });
+        // [{brand: 'TOYOTA', count: 11, models: [{ model: 'corolla', yearRange: '2020 - 2025', data: [{"body": "", model: '	COROLLA (_E9_) 1.8 D (CE90_)', produced: '2020-11 - 2025-03', kw: 49, hp: 67, ccm: 1839 }] }]}]
+        const fitVehicles = await page.evaluate(() => {
+          // -> id: nav-vehicles -> data-controller="collapse"
+          const collapseEls = document
+            .querySelector("#nav-vehicles")
+            .querySelectorAll('div[data-controller="collapse"]');
+
+          return Array.from(collapseEls).map((collapseEl) => {
+            const brandItem: Partial<BrandItem> = {};
+
+            const firstMenuEl = collapseEl.querySelector(
+              'div[data-action="click->collapse#toggleChild"]'
+            );
+
+            brandItem.brand = firstMenuEl.children[0].textContent.trim();
+            brandItem.count =
+              firstMenuEl.children[1].textContent.match(/\d+/)[0];
+
+            const secondMenuEls = collapseEl.querySelectorAll(
+              'div[data-action="click->collapse#toggleChildSibling"]'
+            );
+
+            brandItem.models = Array.from(secondMenuEls).map((secondMenuEl) => {
+              // @ts-ignore
+              const modelItem: ModelItem = {};
+
+              modelItem.modelName = secondMenuEl.children[0].textContent;
+              modelItem.yearRange = secondMenuEl.children[1].textContent;
+              modelItem.data = Array.from(
+                secondMenuEl.nextElementSibling.querySelectorAll(
+                  "tr:not(:first-child)"
+                )
+              ).map((tr) => {
+                return {
+                  body: tr.children[0].textContent.trim(),
+                  model: tr.children[1].textContent.trim(),
+                  produced: tr.children[2].textContent.trim(),
+                  kw: tr.children[3].textContent,
+                  hp: tr.children[4].textContent,
+                  ccm: tr.children[5].textContent,
+                };
+              });
+
+              return modelItem;
+            });
+
+            return brandItem;
+          });
+        });
+
+        data.push({
+          detailUrl,
+          title: titText,
+          ref_nums: refNums,
+          fit_vehicles: fitVehicles,
+        });
+      }
+
+      await sleep(100);
+    }
+
+    // // 处理数据，确保所有字段都有值
+    const processedData = data.map((item) => ({
+      页面地址: item.detailUrl || "",
+      标题: item.title || "",
+      OENumbers: JSON.stringify(item.ref_nums[0]?.brands),
+      CrossReferenceNumbers: JSON.stringify(item.ref_nums[1]?.brands),
+      FitVehicles: JSON.stringify(item.fit_vehicles),
+    }));
+
+    // 创建工作表
+    const ws = XLSX.utils.json_to_sheet(processedData, {
+      header: ["页面地址", "标题", "OENumbers", "CrossReferenceNumbers"],
     });
 
-    data.push({
-      detailUrl,
-      title: titText,
-      ref_nums: refNums,
-      fit_vehicles: fitVehicles,
+    // 创建工作簿
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "汽车配件数据");
+
+    const buffer = XLSX.write(wb, { type: "buffer", bookType: "xlsx" });
+
+    await browser.close();
+
+    return new Response(buffer, {
+      headers: {
+        "Content-Type":
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "Content-Disposition": 'attachment; filename="data.xlsx"',
+      },
     });
+  } catch (e) {
+    console.log("error", e);
   }
-
-  // 处理数据，确保所有字段都有值
-  const processedData = data.map((item) => ({
-    页面地址: item.detailUrl || "",
-    标题: item.title || "",
-    OENumbers: JSON.stringify(item.ref_nums[0]?.brands),
-    CrossReferenceNumbers: JSON.stringify(item.ref_nums[1]?.brands),
-    FitVehicles: JSON.stringify(item.fit_vehicles),
-  }));
-
-  // 创建工作表
-  const ws = XLSX.utils.json_to_sheet(processedData, {
-    header: ["页面地址", "标题", "OENumbers", "CrossReferenceNumbers"],
-  });
-
-  // 创建工作簿
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "汽车配件数据");
-
-  const buffer = XLSX.write(wb, { type: "buffer", bookType: "xlsx" });
-
-  await browser.close();
-
-  return new Response(buffer, {
-    headers: {
-      "Content-Type":
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      "Content-Disposition": 'attachment; filename="data.xlsx"',
-    },
-  });
 }
 
 export { GET };
