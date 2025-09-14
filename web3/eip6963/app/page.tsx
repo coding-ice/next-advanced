@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useAccount, useConnect, useConnectors } from "wagmi";
 
 interface EIP6963ProviderInfo {
   uuid: string;
@@ -17,6 +18,11 @@ interface EIP6963ProviderDetail {
 const HomePage = () => {
   const [wallets, setWallets] = useState([]);
   const [address, setAddress] = useState("");
+  const { connectors, connect } = useConnect();
+
+  const { addresses } = useAccount();
+  console.log(addresses, "addresses");
+  console.log(connectors, "connectors"); // 如何获取 connectors
 
   useEffect(() => {
     const handleAnnounce = (event: CustomEvent<EIP6963ProviderDetail>) => {
