@@ -14,11 +14,12 @@ const HomePage = async () => {
 
   return (
     <div>
-      <h2>{new Date().toLocaleTimeString()}</h2>
+      hi
+      {/* <h2>{new Date().toLocaleTimeString()}</h2>
       <h3>{data.id}</h3>
       <img style={{ width: 300 }} src={data.url} alt="cat" />
       <hr />
-      <ImgCache />
+      <ImgCache /> */}
     </div>
   );
 };
