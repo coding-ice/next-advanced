@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, FormEventHandler, useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 function Form() {
   const [todos, setTodos] = useState([]);
