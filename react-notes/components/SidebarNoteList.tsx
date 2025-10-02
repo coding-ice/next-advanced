@@ -6,7 +6,7 @@ interface Notes {
   notes: Record<string, string>;
 }
 
-function SidebarNotoList(props: Notes) {
+function SidebarNoteList(props: Notes) {
   if (Object.keys(props.notes || {}).length === 0) {
     return <div>No notes found</div>;
   }
@@ -34,4 +34,4 @@ function SidebarNotoList(props: Notes) {
   );
 }
 
-export default SidebarNotoList;
+export default SidebarNoteList;

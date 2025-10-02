@@ -1,7 +1,7 @@
 import React from "react";
 import ReactLogo from "@/assets/svg/react.svg";
 import SideSearchField from "./SideSearchField";
-import SidebarNotoList from "./SidebarNotoList";
+import SidebarNoteList from "./SidebarNoteList";
 import { getAllNotes } from "@/lib/redis";
 
 const Sidebar = async () => {
@@ -15,7 +15,7 @@ const Sidebar = async () => {
       </div>
 
       <SideSearchField />
-      <SidebarNotoList notes={notes} />
+      <SidebarNoteList notes={notes} />
     </div>
   );
 };
