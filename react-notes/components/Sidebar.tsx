@@ -2,8 +2,11 @@ import React from "react";
 import ReactLogo from "@/assets/svg/react.svg";
 import SideSearchField from "./SideSearchField";
 import SidebarNotoList from "./SidebarNotoList";
+import { getAllNotes } from "@/lib/redis";
 
-const Sidebar = () => {
+const Sidebar = async () => {
+  const notes = await getAllNotes();
+
   return (
     <div className="flex flex-col gap-4 p-4 w-80 bg-white border-r border-gray-200">
       <div className="flex gap-1 justify-center items-center">
@@ -12,7 +15,7 @@ const Sidebar = () => {
       </div>
 
       <SideSearchField />
-      <SidebarNotoList />
+      <SidebarNotoList notes={notes} />
     </div>
   );
 };
