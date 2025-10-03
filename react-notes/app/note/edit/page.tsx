@@ -1,6 +1,8 @@
 // 新增
 import React from "react";
 
-export const NewNote = () => {
+const NewNote = () => {
 	return <div>NewNote</div>;
 };
+
+export default NewNote;

@@ -1,6 +1,7 @@
-// 编辑
 import React from "react";
 
-export const EditNote = () => {
+const EditNote = () => {
 	return <div>EditNote</div>;
 };
+
+export default EditNote;
