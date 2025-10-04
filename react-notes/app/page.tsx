@@ -1,10 +1,7 @@
-import Sidebar from "@/components/Sidebar";
-
 const HomePage = () => {
 	return (
-		<div className="flex gap-4 w-screen h-screen">
-			<Sidebar />
-			<div className="flex items-center flex-1">main</div>
+		<div className="flex items-center justify-center w-full h-screen">
+			home page
 		</div>
 	);
 };

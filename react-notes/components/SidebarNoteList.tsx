@@ -4,7 +4,7 @@ import { getAllNotes, type Item } from "@/lib/redis";
 import NoteItem from "./NoteItem";
 
 async function SidebarNoteList() {
-	await new Promise((resolve) => setTimeout(resolve, 5000));
+	await new Promise((resolve) => setTimeout(resolve, 1000));
 	const notes = await getAllNotes();
 
 	if (Object.keys(notes || {}).length === 0) {

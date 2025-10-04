@@ -3,11 +3,11 @@ import "./global.css";
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
 	return (
-		<html>
+		<html lang="en">
 			<body>
 				<div className="flex gap-4 w-screen h-screen">
 					<Sidebar />
-					<div className="flex items-center flex-1">{children}</div>
+					<div className="flex-1">{children}</div>
 				</div>
 			</body>
 		</html>

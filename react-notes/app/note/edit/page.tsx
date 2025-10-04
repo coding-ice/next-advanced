@@ -1,4 +1,3 @@
-// 新增
 import React from "react";
 
 const NewNote = () => {

@@ -27,7 +27,7 @@ const NoteItemContent = ({
 	return (
 		<li>
 			<Link
-				className={`relative flex flex-col gap-1 cursor-pointer p-4 rounded-md ${
+				className={`relative flex flex-col gap-1 cursor-pointer p-4 rounded-md hover:bg-gray-100 ${
 					isActive ? "bg-gray-100 border-[#037dba]" : ""
 				}`}
 				href={`/note/${id}`}
@@ -36,7 +36,10 @@ const NoteItemContent = ({
 				{expendedNode && isExpanded && expendedNode}
 				<button
 					className="flex justify-center items-center absolute right-4 top-4 rounded-full w-6 h-6 bg-gray-300 hover:bg-gray-400 hover:text-white"
-					onClick={() => setIsExpanded(!isExpanded)}
+					onClick={(e) => {
+						e.preventDefault();
+						setIsExpanded(!isExpanded);
+					}}
 					type="button"
 				>
 					{isExpanded ? <ChevronUp /> : <ChevronDown />}

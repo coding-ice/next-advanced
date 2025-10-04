@@ -19,15 +19,8 @@
 			"nursery": {
 				"useSortedClasses": {
 					"options": {
-						"attributes": [
-							"classList"
-						],
-						"functions": [
-							"clsx",
-							"cva",
-							"tw",
-							"tw.*"
-						]
+						"attributes": ["classList"],
+						"functions": ["clsx", "cva", "tw", "tw.*"]
 					}
 				}
 			}
