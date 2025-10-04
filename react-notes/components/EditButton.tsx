@@ -1,12 +1,18 @@
 import Link from "next/link";
 
-interface EditButtonProps {
+interface EditButtonProps
+	extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 	noteId?: string;
 	className?: string;
 	children: React.ReactNode;
 }
 
-const EditButton = ({ noteId, children, className }: EditButtonProps) => {
+const EditButton = ({
+	noteId,
+	children,
+	className,
+	...rest
+}: EditButtonProps) => {
 	const isDraft = !!noteId;
 
 	return (
@@ -14,6 +20,7 @@ const EditButton = ({ noteId, children, className }: EditButtonProps) => {
 			<button
 				type="button"
 				className={`bg-[#037dba] text-white h-8 px-3 rounded-2xl cursor-pointer hover:bg-[#0396df] ${className}`}
+				{...rest}
 			>
 				{children}
 			</button>
