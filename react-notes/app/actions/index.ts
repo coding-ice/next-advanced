@@ -7,8 +7,7 @@ import {
 } from "@/lib/redis";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+import { sleep } from "@/utils";
 
 export async function saveNote(_, formData: FormData) {
   const noteId = formData.get("noteId") as string | undefined;
