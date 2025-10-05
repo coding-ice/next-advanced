@@ -5,10 +5,11 @@ import NoteItemContent from "./NoteItemContent";
 
 interface NoteItemProps {
 	id: string;
-	note: Item;
+	note: Omit<Item, "updateTime">;
+	updateTime?: React.ReactNode;
 }
 
-const NoteItem = ({ id, note }: NoteItemProps) => {
+const NoteItem = ({ id, note, updateTime }: NoteItemProps) => {
 	return (
 		<NoteItemContent
 			id={id}
@@ -19,9 +20,7 @@ const NoteItem = ({ id, note }: NoteItemProps) => {
 			}
 		>
 			<span className="font-bold text-[18px]"> {note.title}</span>
-			<span className="text-[12px] text-black/30">
-				{dayjs(note.updateTime).format("YYYY-MM-DD HH:mm:ss")}
-			</span>
+			{updateTime}
 		</NoteItemContent>
 	);
 };

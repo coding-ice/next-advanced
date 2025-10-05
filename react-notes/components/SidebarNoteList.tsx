@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import React from "react";
 import { getAllNotes, type Item } from "@/lib/redis";
-import NoteItem from "./NoteItem";
+import SidebarListFilter from "./SidebarListFilter";
 
 async function SidebarNoteList() {
 	await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -12,15 +12,22 @@ async function SidebarNoteList() {
 	}
 
 	return (
-		<div>
-			<ul className="flex flex-col gap-2">
-				{Object.keys(notes).map((key) => {
-					const item = JSON.parse(notes[key]) as Item;
+		<SidebarListFilter
+			notes={Object.entries(notes).map(([key, value]) => {
+				const item = JSON.parse(value) as Item;
 
-					return <NoteItem id={key} key={key} note={item} />;
-				})}
-			</ul>
-		</div>
+				return {
+					key,
+					title: item.title,
+					content: item.content,
+					updateTime: (
+						<span className="text-[12px] text-black/30">
+							{dayjs(item.updateTime).format("YYYY-MM-DD HH:mm:ss")}
+						</span>
+					),
+				};
+			})}
+		/>
 	);
 }
 
