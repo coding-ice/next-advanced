@@ -8,32 +8,41 @@ import {
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-export async function saveNote(
-  title: string,
-  content: string,
-  noteId?: string
-) {
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+export async function saveNote(_, formData: FormData) {
+  const noteId = formData.get("noteId") as string | undefined;
+  const title = formData.get("title") as string;
+  const content = formData.get("content") as string;
+
+  await sleep(1000);
+
   if (noteId) {
     await updateNote(noteId, {
       title,
       content,
       updateTime: new Date().toISOString(),
     });
-    revalidatePath(`/note/${noteId}`);
-    redirect(`/note/${noteId}`);
+    revalidatePath("/", "layout");
+    return {
+      message: "success",
+    };
   } else {
     const uuid = await addNote({
       title,
       content,
       updateTime: new Date().toISOString(),
     });
-    revalidatePath(`/note/${uuid}`);
+    revalidatePath("/", "layout");
     redirect(`/note/${uuid}`);
   }
 }
 
-export async function deleteNote(noteId: string) {
+export async function deleteNote(_, formData: FormData) {
+  const noteId = formData.get("noteId") as string;
+  await sleep(1000);
+
   await deleteNoteRedis(noteId);
-  revalidatePath("/");
+  revalidatePath("/", "layout");
   redirect("/");
 }

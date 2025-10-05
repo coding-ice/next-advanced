@@ -1,18 +1,19 @@
 "use client";
 
-import React, { FormEvent, useState, useTransition } from "react";
-import EditButton from "./EditButton";
+import React, { useActionState, useEffect, useState } from "react";
 import NotePreview from "./NotePreview";
-import {
-	deleteNote as deleteNoteAction,
-	saveNote as saveNoteAction,
-} from "@/app/actions";
+import { deleteNote, saveNote } from "@/app/actions";
+import { toast } from "sonner";
 
 interface NoteEditorProps {
 	noteId?: string;
 	initialTitle: string;
 	initialContent?: string;
 }
+
+const initialState = {
+	message: "",
+};
 
 const NoteEditor = ({
 	noteId,
@@ -21,56 +22,62 @@ const NoteEditor = ({
 }: NoteEditorProps) => {
 	const [title, setTitle] = useState(initialTitle);
 	const [content, setContent] = useState(initialContent);
-	const [isPending, startTransition] = useTransition();
+
+	const [saveNoteState, saveNoteAction, saving] = useActionState(
+		saveNote,
+		initialState,
+	);
+
+	const [_, deleteNoteAction, deleting] = useActionState(
+		deleteNote,
+		initialState,
+	);
 
 	const isDraft = !!noteId;
 
-	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-		console.log("handleSubmit");
-		e.preventDefault();
-		startTransition(async () => {
-			await saveNoteAction(title, content, noteId);
-		});
-	};
-
-	const handleDeleteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-		startTransition(async () => {
-			await deleteNoteAction(noteId);
-		});
-	};
+	useEffect(() => {
+		if (saveNoteState.message === "success") {
+			toast.success("Note saved successfully");
+		}
+	}, [saveNoteState]);
 
 	return (
-		<form onSubmit={handleSubmit}>
+		<form autoComplete="off">
 			<div className="flex gap-6 p-8">
 				<div className="flex flex-col justify-between w-[400px] gap-4">
 					<input
+						name="title"
 						className="block h-[40px] border border-solid border-[#bcc0c4] px-2"
 						value={title}
 						onChange={(e) => setTitle(e.target.value)}
 					/>
 					<textarea
+						name="content"
 						className="border h-[600px] border-solid border-[#bcc0c4] p-2"
 						value={content}
 						onChange={(e) => setContent(e.target.value)}
 					/>
+					<input name="noteId" type="hidden" value={noteId} />
 				</div>
 				<div className="flex flex-col flex-1 gap-4">
 					<div className="flex justify-end gap-2">
 						<button
-							className="h-[40px] cursor-pointer px-2 rounded-2xl bg-[#037dba] text-white hover:bg-[#0396df]"
 							type="submit"
-							disabled={isPending}
+							className="h-[40px] cursor-pointer px-2 rounded-2xl bg-[#037dba] text-white hover:bg-[#0396df]"
+							formAction={saveNoteAction}
+							disabled={saving}
 						>
-							Done
+							{saving ? "Saving..." : "Done"}
 						</button>
 						{isDraft && (
+							// biome-ignore lint/a11y/useButtonType: <explanation>
 							<button
-								type="button"
+								role="menuitem"
 								className="h-[40px] cursor-pointer px-2 rounded-2xl !text-red-500 bg-transparent border border-solid border-red-500 hover:text-white! hover:bg-red-500"
-								onClick={handleDeleteClick}
-								disabled={isPending}
+								formAction={deleteNoteAction}
+								disabled={deleting}
 							>
-								Delete
+								{deleting ? "Deleting..." : "Delete"}
 							</button>
 						)}
 					</div>
