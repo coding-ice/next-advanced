@@ -32,6 +32,7 @@ const SiderbarImport = () => {
 		const data = await response.json();
 
 		router.push(`/note/${data.uuid}`);
+		router.refresh();
 
 		e.target.type = "text";
 		e.target.type = "file";
