@@ -4,6 +4,7 @@ import SidebarNoteList from "./SidebarNoteList";
 import SideSearchField from "./SideSearchField";
 import FallbackSkeleton from "./FallbackSkeleton";
 import Link from "next/link";
+import SiderbarImport from "./SiderbarImport";
 
 const Sidebar = async () => {
 	return (
@@ -17,6 +18,7 @@ const Sidebar = async () => {
 			<Suspense fallback={<FallbackSkeleton />}>
 				<SidebarNoteList />
 			</Suspense>
+			<SiderbarImport />
 		</div>
 	);
 };
