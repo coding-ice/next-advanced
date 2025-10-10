@@ -1,0 +1,7 @@
+FROM node:22-alpine
+WORKDIR /app
+# 将当前目录 复制到工作区的 /app 目录下
+COPY . .
+RUN npm install --registry=https://registry.npmmirror.com && npm run build
+CMD npm start
+EXPOSE 3000
